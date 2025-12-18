@@ -1,0 +1,83 @@
+#Local
+import random
+# Función objetivo: x^2 (mínimo en x=0)
+def circle(x, y):
+    return x**2 + y**2
+      
+# Búsqueda Local
+def local_search(func, bounds, max_iter=1000, step_size=0.1):
+    # Inicializar solución aleatoria
+    x = random.uniform(bounds[0], bounds[1])
+    y = random.uniform(bounds[0], bounds[1])
+    
+    best_val = func(x, y)
+    
+    history = [((x,y), best_val)]  # para análisis posterior
+    
+    for _ in range(max_iter):
+        # Generar vecino en un rango pequeño
+        xn = x + random.uniform(-step_size, step_size)
+        yn = y + random.uniform(-step_size, step_size)
+        
+        # Restringir dentro de los límites
+        xn = max(bounds[0], min(bounds[1], xn))
+        yn = max(bounds[0], min(bounds[1], yn))
+        
+        val = func(xn, yn)
+        
+        # Si mejora, lo aceptamos
+        if val < best_val:
+            x, y, best_val = xn, yn, val
+        
+        history.append((x, y, best_val))
+    
+    return (x, y), best_val, history
+# Ejecución
+if __name__ == "__main__":
+    bounds = (-5.12, 5.12)  # límites para x, y
+    best_xy, best_val, history = local_search(circle, bounds)
+    bx, by = best_xy
+  
+    print("Mejor solución encontrada:")
+    print(f"x = {bx:.4f}, y = {by:.4f} , valor = {best_val:.4f}")
+
+#Aleatoria:
+import random
+import matplotlib.pyplot as plt
+# Definimos la función de fitness
+def fitness(x, y):
+    return x**2 + y**2
+# Parámetros
+num_iteraciones = 100
+rango_min = -5
+rango_max = 5
+# Variables para almacenar el mejor resultado
+mejor_x = None
+mejor_y = None
+mejor_fitness = float("inf")
+# Listas para graficar el progreso
+mejores = []
+# Algoritmo de búsqueda aleatoria
+for i in range(num_iteraciones):
+    # Generamos un candidato aleatorio
+    x = random.uniform(rango_min, rango_max)
+    y = random.uniform(rango_min, rango_max)    
+    f = fitness(x, y)
+    # Si es mejor, lo guardamos
+    if f < mejor_fitness:
+        mejor_x = x
+        mejor_y = y
+        mejor_fitness = f
+    mejores.append(mejor_fitness)
+# Resultados
+print("Mejores valores encontrados:")
+print("x =", mejor_x)
+print("y =", mejor_y)
+print("f(x) =", mejor_fitness)
+# Graficar el progreso
+plt.plot(mejores, marker="o", markersize=3)
+plt.xlabel("Iteración")
+plt.ylabel("Mejor fitness encontrado")
+plt.title("Búsqueda aleatoria en f(x, y) = x^2 + y^2")
+plt.grid(True)
+plt.show()
